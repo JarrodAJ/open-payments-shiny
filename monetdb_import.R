@@ -1,0 +1,110 @@
+require(R.utils)        # load the R.utils package (counts the number of lines in a file quickly)
+require(MonetDB.R)        # load the MonetDB.R package (connects r to a monet database)
+# Get names
+op_16_csv <- "c:/projects/DSBC/Shiny_app/data_raw/OP_DTL_GNRL_PGYR2016_P01172018.csv"
+op_gnrl_fields_org <- read.csv(op_16_csv, nrows = 1)
+# print names
+#for(name in names(op_gnrl_fields_org)){print(name)}
+# Subsitutions made to generate new field names: 
+# "Applicable_Manufacturer_or_Applicable_GPO", "man_gpo"
+# "Drug_or_Biological_or_Device_or_Medical_Supply", "item"
+# "Covered_or_Noncovered_Indicator", "cov_flag"
+# "Associated_Drug_or_Biological_NDC", "assoc_NDC"
+# "Product_Category_or_Therapeutic_Area", "cat_or_tx_area"
+# "Payment_or_Transfer_of_Value", "pay_or_tv"
+# "Teaching_Hospital", "hosp"
+# "Physician", "phys"
+# "License_State_code", "lic_st"
+# "Making_Payment", "paying"
+# "Recipient", "recip"
+# "Business_Street_Address_Line", "bus_add"
+
+# New names 
+new_fields <- c(
+  "Change_Type"
+  , "Covered_recip_Type"
+  , "hosp_CCN"
+  , "hosp_ID"
+  , "hosp_Name"
+  , "phys_Profile_ID"
+  , "phys_First_Name"
+  , "phys_Middle_Name"
+  , "phys_Last_Name"
+  , "phys_Name_Suffix"
+  , "recip_Primary_bus_add1"
+  , "recip_Primary_bus_add2"
+  , "recip_City"
+  , "recip_State"
+  , "recip_Zip_Code"
+  , "recip_Country"
+  , "recip_Province"
+  , "recip_Postal_Code"
+  , "phys_Primary_Type"
+  , "phys_Specialty"
+  , "phys_lic_st1"
+  , "phys_lic_st2"
+  , "phys_lic_st3"
+  , "phys_lic_st4"
+  , "phys_lic_st5"
+  , "Submitting_man_gpo_Name"
+  , "man_gpo_paying_ID"
+  , "man_gpo_paying_Name"
+  , "man_gpo_paying_State"
+  , "man_gpo_paying_Country"
+  , "Total_Amount_of_Payment_USDollars"
+  , "Date_of_Payment"
+  , "Number_of_Payments_Included_in_Total_Amount"
+  , "Form_of_pay_or_tv"
+  , "Nature_of_pay_or_tv"
+  , "City_of_Travel"
+  , "State_of_Travel"
+  , "Country_of_Travel"
+  , "phys_Ownership_Indicator"
+  , "Third_Party_Payment_recip_Indicator"
+  , "Name_of_Third_Party_Entity_Receiving_pay_or_tv"
+  , "Charity_Indicator"
+  , "Third_Party_Equals_Covered_recip_Indicator"
+  , "Contextual_Information"
+  , "Delay_in_Publication_Indicator"
+  , "Record_ID"
+  , "Dispute_Status_for_Publication"
+  , "Related_Product_Indicator"
+  , "cov_flag_1"
+  , "Indicate_item_1"
+  , "cat_or_tx_area_1"
+  , "Name_of_item_1"
+  , "assoc_NDC_1"
+  , "cov_flag_2"
+  , "Indicate_item_2"
+  , "cat_or_tx_area_2"
+  , "Name_of_item_2"
+  , "assoc_NDC_2"
+  , "cov_flag_3"
+  , "Indicate_item_3"
+  , "cat_or_tx_area_3"
+  , "Name_of_item_3"
+  , "assoc_NDC_3"
+  , "cov_flag_4"
+  , "Indicate_item_4"
+  , "cat_or_tx_area_4"
+  , "Name_of_item_4"
+  , "assoc_NDC_4"
+  , "cov_flag_5"
+  , "Indicate_item_5"
+  , "cat_or_tx_area_5"
+  , "Name_of_item_5"
+  , "assoc_NDC_5"
+  , "Program_Year"
+  , "Payment_Publication_Date"
+)
+tf1 <- tempfile()
+op_16_csv <- "c:/projects/DSBC/Shiny_app/data_raw/OP_DTL_GNRL_PGYR2016_P01172018.csv"
+csv.file <- op_16_csv
+batfile <-
+  monetdb.server.setup(
+    database.directory = getwd() ,
+    monetdb.program.path = "C:/Program Files/MonetDB/MonetDB5" ,
+    dbname = "op" ,
+    dbport = 50006
+  )
+batfile
