@@ -44,27 +44,7 @@ server <- function(input, output){
   
   output$cleve_plot <- renderPlot({
     
-    # cleveland_plot_data <- data_paid() %>% 
-    #   inner_join(data_unpaid(), by = "hcpcs_code", suffix = c("paid", "unpaid"))%>% 
-    #   select(hcpcs_code, prov_avg_alwdpaid, prov_avg_alwdunpaid ) %>%
-    #   mutate(
-    #     avg_diff = round(prov_avg_alwdpaid - prov_avg_alwdunpaid, 2), 
-    #     abs_diff = abs(avg_diff), 
-    #     pct_diff = prov_avg_alwdpaid / prov_avg_alwdunpaid - 1, 
-    #     abs_pct_diff = abs(pct_diff))  %>% 
-    #   filter(abs_diff > 10 | abs_pct_diff > .15) %>% 
-    #   arrange(desc(abs_diff)) %>%  
-    #   head(n = 35) %>% 
-    #   gather(key = paid_group, value = prov_avg_srvc_cost, 
-    #          prov_avg_alwdpaid:prov_avg_alwdunpaid ) %>% 
-    #   mutate(paid_group = gsub("prov_avg_alwd", "", paid_group), 
-    #          prov_avg_srvc_cost = round(prov_avg_srvc_cost, 2)) %>% 
-    #   # arrange(desc(avg_diff), desc(paid_group)) %>%  
-    #   arrange(abs_diff, desc(paid_group)) %>%  
-    #   mutate(hcpcs_code = factor(hcpcs_code, levels = .$hcpcs_code), 
-    #          paid_group = factor(paid_group, levels = .$paid_group)  )
-    
-    right_label <- cleveland_plot_data() %>%
+       right_label <- cleveland_plot_data() %>%
       group_by(hcpcs_code) %>%
       arrange(desc(abs_diff)) %>%
       top_n(1, prov_avg_srvc_cost)
@@ -76,19 +56,18 @@ server <- function(input, output){
     
     #Create plot
     # avg_max <- max(cleveland_plot_data$prov_avg_srvc_cost)
-    # lim_max <- avg_max  + (avg_max - min(
-    #   cleveland_plot_data$prov_avg_srvc_cost)) * 1.02
+    # lim_max <- round()
     
     
       ggplot(cleveland_plot_data(), aes(prov_avg_srvc_cost, hcpcs_code)) +
       geom_line(aes(group = hcpcs_code)) +
-      geom_point(aes(color = paid_group), size = 1.5) +
+      geom_point(aes(color = paid_group), size = 2) +
       geom_text(data = right_label, aes(color = paid_group, label = scales::dollar(round(prov_avg_srvc_cost, 0))),
-                size = 3, hjust = -.5) +
+                size = 4, hjust = -.5) +
       geom_text(data = left_label, aes(color = paid_group, label = scales::dollar(round(prov_avg_srvc_cost, 0))),
-                size = 3, hjust = 1.5) +
+                size = 4, hjust = 1.5) +
       scale_color_discrete(labels = c("No payments documented", "Payments above selected threshold")) +
-      scale_x_continuous(labels = scales::dollar, expand = c(0.02, 0), 
+      scale_x_continuous(labels = scales::dollar, expand = c(0.05, 0), 
                          limits = c(-500, 18000),
                          breaks = seq(0, 18000, by = 2000)) +
       scale_y_discrete(expand = c(.02, 0)) +
